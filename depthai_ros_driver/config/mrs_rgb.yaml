@@ -1,0 +1,12 @@
+/oak:
+  camera_i_enable_imu: false
+  camera_i_enable_ir: false
+  camera_i_enable_stereo: false
+  camera_i_nn_type: none
+  camera_i_pipeline_type: RGB
+  camera_i_usb_speed: HIGH
+
+  rgb_i_width: 1920
+  rgb_i_height: 1080
+  rgb_i_fps: 24.0
+  rgb_i_resolution: '1080'

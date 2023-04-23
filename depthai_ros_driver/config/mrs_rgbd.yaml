@@ -1,0 +1,41 @@
+/oak:
+  camera_i_enable_imu: false
+  camera_i_enable_ir: false
+  camera_i_nn_type: none
+  camera_i_pipeline_type: RGBD
+  camera_i_usb_speed: HIGH
+
+  rgb_i_width: 1920
+  rgb_i_height: 1080
+  rgb_i_fps: 15.0
+  rgb_i_resolution: '1080'
+
+  stereo_i_width: 848
+  stereo_i_height: 480
+  stereo_i_fps: 15.0
+  stereo_i_resolution: '720'
+
+  stereo_i_align_depth: false
+  stereo_i_subpixel: false
+  stereo_i_depth_filter_size: 3
+  stereo_i_depth_preset: HIGH_ACCURACY
+  
+  stereo_i_enable_decimation_filter: false
+  stereo_i_decimation_filter_decimation_factor: 1
+  stereo_i_decimation_filter_decimation_mode: NON_ZERO_MEDIAN
+  
+  stereo_i_enable_spatial_filter: true
+  stereo_i_spatial_filter_alpha: 0.5
+  stereo_i_spatial_filter_delta: 20
+  stereo_i_spatial_filter_hole_filling_radius: 7
+  stereo_i_spatial_filter_iterations: 1
+  
+  stereo_i_enable_temporal_filter: false
+  stereo_i_temporal_filter_alpha: 0.4
+  stereo_i_temporal_filter_delta: 20
+  stereo_i_temporal_filter_persistency: VALID_2_IN_LAST_4
+  
+  stereo_i_enable_threshold_filter: true
+  stereo_i_threshold_filter_max_range: 12000
+  stereo_i_threshold_filter_min_range: 800
+  stereo_i_stereo_conf_threshold: 255
