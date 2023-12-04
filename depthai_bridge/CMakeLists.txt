@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.10.2)  # CMake version in Ubuntu 18.04 LTS
 set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-project(depthai_bridge VERSION 2.6.4 LANGUAGES CXX C)
+project(depthai_bridge VERSION 2.8.2 LANGUAGES CXX C)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -13,11 +13,11 @@ if(POLICY CMP0057)
 endif()
 
 set(opencv_version 4)
-find_package(OpenCV ${opencv_version} QUIET COMPONENTS imgproc highgui)
+find_package(OpenCV ${opencv_version} QUIET COMPONENTS imgproc highgui calib3d)
 if(NOT OpenCV_FOUND)
   message(STATUS "----------------Did not find OpenCV 4, trying OpenCV 3--------------")
   set(opencv_version 3)
-  find_package(OpenCV ${opencv_version} REQUIRED COMPONENTS imgproc highgui)
+  find_package(OpenCV ${opencv_version} REQUIRED COMPONENTS imgproc highgui calib3d)
 endif()
 
 set(catkin_FOUND 1)
@@ -38,6 +38,11 @@ find_package(catkin REQUIRED COMPONENTS
   stereo_msgs
   std_msgs
   vision_msgs
+  tf2_ros
+  urdf
+  robot_state_publisher
+  tf2
+  tf2_geometry_msgs
 )
 find_package(Boost REQUIRED)
 find_package(depthai CONFIG REQUIRED)
@@ -48,12 +53,14 @@ FILE(GLOB LIB_SRC
 "src/ImgDetectionConverter.cpp"
 "src/SpatialDetectionConverter.cpp"
 "src/ImuConverter.cpp"
+"src/TFPublisher.cpp"
+"src/TrackedFeaturesConverter.cpp"
 )
 
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS depthai_ros_msgs camera_info_manager roscpp sensor_msgs std_msgs vision_msgs image_transport cv_bridge stereo_msgs
+  CATKIN_DEPENDS depthai_ros_msgs camera_info_manager roscpp sensor_msgs std_msgs vision_msgs image_transport cv_bridge stereo_msgs tf2_ros urdf robot_state_publisher tf2 tf2_geometry_msgs
 )
 
 list(APPEND DEPENDENCY_PUBLIC_LIBRARIES ${catkin_LIBRARIES})
@@ -80,6 +87,7 @@ target_link_libraries(${PROJECT_NAME}
   depthai::core
   opencv_imgproc
   opencv_highgui
+  opencv_calib3d
 )
 
 install(TARGETS ${PROJECT_NAME}
@@ -94,10 +102,3 @@ install(DIRECTORY include/${PROJECT_NAME}/
   FILES_MATCHING PATTERN "*.hpp"
 )
 
-install(DIRECTORY launch/ DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
-FILES_MATCHING PATTERN "*.launch")
-
-install(DIRECTORY
-  urdf
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)

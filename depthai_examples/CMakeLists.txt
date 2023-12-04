@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.10.2)  # CMake version in Ubuntu 18.04 LTS
-project(depthai_examples VERSION 2.6.4 LANGUAGES CXX C)
+project(depthai_examples VERSION 2.8.2 LANGUAGES CXX C)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -105,14 +105,13 @@ target_link_libraries(nodelet_stereo
 
 dai_add_node(crop_control_service src/crop_control_service.cpp)
 dai_add_node(mobilenet_node src/mobilenet_publisher.cpp)
-dai_add_node(rgb_node src/rgb_publisher.cpp)
 dai_add_node(rgb_stereo_node src/rgb_stereo_node.cpp)
 dai_add_node(rgb_subscriber_node src/rgb_video_subscriber.cpp)
-# dai_add_node(stereo_mimic_node src/stereo_mimic_node.cpp)
 dai_add_node(stereo_inertial_node src/stereo_inertial_publisher.cpp)
-
 dai_add_node(stereo_node src/stereo_publisher.cpp)
 dai_add_node(yolov4_spatial_node src/yolov4_spatial_publisher.cpp)
+dai_add_node(feature_tracker src/feature_tracker_publisher.cpp)
+
 
 target_compile_definitions(mobilenet_node PRIVATE BLOB_NAME="${mobilenet_blob_name}")
 target_compile_definitions(yolov4_spatial_node PRIVATE BLOB_NAME="${tiny_yolo_v4_blob_name}")
@@ -128,12 +127,12 @@ install(TARGETS
         crop_control_service
         mobilenet_node
         nodelet_stereo
-        rgb_node
         rgb_stereo_node
         rgb_subscriber_node
         stereo_inertial_node
         stereo_node
         yolov4_spatial_node
+        feature_tracker
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

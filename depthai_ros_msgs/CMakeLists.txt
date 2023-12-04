@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.10.2)  # CMake version in Ubuntu 18.04 LTS
 
-project (depthai_ros_msgs VERSION 2.6.4)
+project (depthai_ros_msgs VERSION 2.8.2)
 
 if(POLICY CMP0057)
     cmake_policy(SET CMP0057 NEW)
@@ -30,6 +30,9 @@ add_message_files (
   # ImageMarkerArray.msg
   SpatialDetection.msg
   SpatialDetectionArray.msg
+  ImuWithMagneticField.msg
+  TrackedFeature.msg
+  TrackedFeatures.msg
 )
 
 ## Generate services in the 'srv' folder
