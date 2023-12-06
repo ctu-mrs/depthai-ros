@@ -3,6 +3,7 @@
     <!-- <args for urdf/> -->
     <arg name="camera_model"         default="OAK-D" />
     <arg name="tf_prefix"            default="oak" />
+    <arg name="name"                 default="oak" />
 
     <arg name="base_frame"           default="oak-d_frame" />
     <arg name="parent_frame"         default="oak-d-base-frame" />
@@ -29,5 +30,5 @@
                         cam_yaw:=$(arg cam_yaw)"/>
 
 
-    <node name="$(arg tf_prefix)_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen" required="true"/>
+    <node name="$(arg name)_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen" required="true"/>
 </launch>
