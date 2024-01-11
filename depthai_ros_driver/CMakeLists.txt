@@ -179,6 +179,7 @@ install(FILES nodelet_plugins.xml
 install(
   PROGRAMS
   scripts/obj_pub.py
+  scripts/custom_obj_pub.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

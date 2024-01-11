@@ -53,6 +53,7 @@ ${OpenCV_INCLUDE_DIRS}
 # Declare a C++ library
 add_library(${PROJECT_NAME} SHARED
     src/detection2d_overlay.cpp
+    src/person2d_overlay.cpp
     src/segmentation_overlay.cpp
     src/wls_filter.cpp
     src/spatial_bb.cpp
