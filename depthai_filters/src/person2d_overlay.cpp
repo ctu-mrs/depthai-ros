@@ -35,12 +35,23 @@ void Person2DOverlay::overlayCB(const sensor_msgs::ImageConstPtr& preview, const
           continue;
         }
         auto confidence = detection.results[0].score;
-        cv::putText(previewMat, labelStr, cv::Point(x1 + 10, y1 + 20), cv::FONT_HERSHEY_TRIPLEX, 0.5, white, 3);
-        cv::putText(previewMat, labelStr, cv::Point(x1 + 10, y1 + 20), cv::FONT_HERSHEY_TRIPLEX, 0.5, black);
+
+        cv::Mat img_new = cv::Mat::zeros(previewMat.rows * 2, previewMat.cols * 2, previewMat.type());;
+        cv::putText(img_new, labelStr, cv::Point(x2 - 10, y2 - 20), cv::FONT_HERSHEY_TRIPLEX, 0.5, white, 3);
+        cv::putText(img_new, labelStr, cv::Point(x2 - 10, y2 - 20), cv::FONT_HERSHEY_TRIPLEX, 0.5, black);
+        cv::Mat rotationMatrix = cv::getRotationMatrix2D(cv::Point(x2 - 10, y2 - 20), 180, 1.0); //couter clockwise rotation
+        cv::warpAffine(img_new, img_new, rotationMatrix, cv::Size(previewMat.cols, previewMat.rows));
+        previewMat = previewMat + img_new;
+
         std::stringstream confStr;
         confStr << std::fixed << std::setprecision(2) << confidence * 100;
-        cv::putText(previewMat, confStr.str(), cv::Point(x1 + 10, y1 + 40), cv::FONT_HERSHEY_TRIPLEX, 0.5, white, 3);
-        cv::putText(previewMat, confStr.str(), cv::Point(x1 + 10, y1 + 40), cv::FONT_HERSHEY_TRIPLEX, 0.5, black);
+        img_new = cv::Mat::zeros(previewMat.rows * 2, previewMat.cols * 2, previewMat.type());;
+        cv::putText(img_new, confStr.str(), cv::Point(x2 - 10, y2 - 40), cv::FONT_HERSHEY_TRIPLEX, 0.5, white, 3);
+        cv::putText(img_new, confStr.str(), cv::Point(x2 - 10, y2 - 40), cv::FONT_HERSHEY_TRIPLEX, 0.5, black);
+        rotationMatrix = cv::getRotationMatrix2D(cv::Point(x2 - 10, y2 - 40), 180, 1.0);//couter clockwise rotation
+        cv::warpAffine(img_new, img_new, rotationMatrix, cv::Size(previewMat.cols, previewMat.rows));
+        previewMat = previewMat + img_new;
+
         cv::rectangle(previewMat, cv::Rect(cv::Point(x1, y1), cv::Point(x2, y2)), blue);
     }
     sensor_msgs::Image outMsg;
