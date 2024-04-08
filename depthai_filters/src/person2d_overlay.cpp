@@ -25,6 +25,8 @@ void Person2DOverlay::overlayCB(const sensor_msgs::ImageConstPtr& preview, const
     auto black = cv::Scalar(0, 0, 0);
     auto blue = cv::Scalar(255, 0, 0);
 
+    bool person_detected = false;
+
     for(auto& detection : detections->detections) {
         auto x1 = detection.bbox.center.x - detections->detections[0].bbox.size_x / 2.0;
         auto x2 = detection.bbox.center.x + detections->detections[0].bbox.size_x / 2.0;
@@ -34,6 +36,7 @@ void Person2DOverlay::overlayCB(const sensor_msgs::ImageConstPtr& preview, const
         if (labelStr != "person"){
           continue;
         }
+        person_detected = true;
         auto confidence = detection.results[0].score;
 
         cv::Mat img_new = cv::Mat::zeros(previewMat.rows * 2, previewMat.cols * 2, previewMat.type());;
@@ -54,10 +57,12 @@ void Person2DOverlay::overlayCB(const sensor_msgs::ImageConstPtr& preview, const
 
         cv::rectangle(previewMat, cv::Rect(cv::Point(x1, y1), cv::Point(x2, y2)), blue);
     }
-    sensor_msgs::Image outMsg;
-    cv_bridge::CvImage(preview->header, sensor_msgs::image_encodings::BGR8, previewMat).toImageMsg(outMsg);
-
-    overlayPub.publish(outMsg);
+ 
+    if(person_detected){
+      sensor_msgs::Image outMsg;
+      cv_bridge::CvImage(preview->header, sensor_msgs::image_encodings::BGR8, previewMat).toImageMsg(outMsg);
+      overlayPub.publish(outMsg);
+    }
 }
 }  // namespace depthai_filters
 
