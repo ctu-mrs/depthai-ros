@@ -9,6 +9,7 @@
 #include "pluginlib/class_list_macros.h"
 #include "visualization_msgs/MarkerArray.h"
 #include "visualization_msgs/Marker.h"
+#include "tf/tf.h"
 
 namespace depthai_filters {
 void Person2DOverlay3d::onInit() {
@@ -61,6 +62,23 @@ void Person2DOverlay3d::overlayCB3d(const sensor_msgs::ImageConstPtr& preview, c
         auto drone_y = dronePose->pose.pose.position.y;
         auto drone_z = dronePose->pose.pose.position.z;
 
+        // Get roll pitch yaw from drone - LB
+        tf::Quaternion q_drone(
+            dronePose->pose.pose.orientation.x,
+            dronePose->pose.pose.orientation.y,
+            dronePose->pose.pose.orientation.z,
+            dronePose->pose.pose.orientation.w);
+        tf::Matrix3x3 m(q_drone);
+        double roll, pitch, yaw;
+        m.getRPY(roll, pitch, yaw);
+
+        // Add yaw from x center of the bounding box; use focal length - LB
+        double field_of_view = 1.221730; // 70 degrees - LB - Change this value according to your camera
+        yaw += (detection.bbox.center.x - previewMat.cols/2) / previewMat.cols * field_of_view;
+        // Change yaw to quaternion - LB
+        tf::Quaternion q_detection;
+        q_detection.setRPY(roll, pitch, yaw);
+        
         cv::Mat img_new = cv::Mat::zeros(previewMat.rows * 2, previewMat.cols * 2, previewMat.type());;
         cv::putText(img_new, labelStr, cv::Point(x2 - 10, y2 - 20), cv::FONT_HERSHEY_TRIPLEX, 0.5, white, 3);
         cv::putText(img_new, labelStr, cv::Point(x2 - 10, y2 - 20), cv::FONT_HERSHEY_TRIPLEX, 0.5, black);
@@ -96,10 +114,10 @@ void Person2DOverlay3d::overlayCB3d(const sensor_msgs::ImageConstPtr& preview, c
         marker.pose.position.x = drone_x;
         marker.pose.position.y = drone_y;
         marker.pose.position.z = drone_z;
-        marker.pose.orientation.x = dronePose->pose.pose.orientation.x;
-        marker.pose.orientation.y = dronePose->pose.pose.orientation.y;
-        marker.pose.orientation.z = dronePose->pose.pose.orientation.z;
-        marker.pose.orientation.w = dronePose->pose.pose.orientation.w;
+        marker.pose.orientation.x = q_detection.x();
+        marker.pose.orientation.y = q_detection.y();
+        marker.pose.orientation.z = q_detection.z();
+        marker.pose.orientation.w = q_detection.w();
         marker.scale.x = 0.1;
         marker.scale.y = 0.1;
         marker.scale.z = 0.1;
