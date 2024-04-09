@@ -25,3 +25,12 @@ void addTextToFrame(cv::Mat& frame, const std::string& text, int x, int y) {
 }
 }  // namespace utils
 }  // namespace depthai_filters
+
+// Get depth from image
+float getDepthFromImage(const sensor_msgs::ImageConstPtr& depthImage, int x, int y) {
+    cv::Mat depthMat = utils::msgToMat(depthImage, sensor_msgs::image_encodings::TYPE_16UC1);
+    if(depthMat.empty()) {
+        return 0;
+    }
+    return depthMat.at<uint16_t>(y, x) / 1000.0;
+} // namespace depthai_filters
