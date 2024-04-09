@@ -1,4 +1,4 @@
-#include "depthai_filters/person2d_overlay.hpp"
+#include "depthai_filters/person2d_overlay_w3dMarker.hpp"
 
 #include <memory>
 #include <string>
@@ -11,26 +11,32 @@
 #include "visualization_msgs/Marker.h"
 
 namespace depthai_filters {
-void Person2DOverlay::onInit() {
+void Person2DOverlay3d::onInit() {
     auto pNH = getPrivateNodeHandle();
     previewSub.subscribe(pNH, "/rgb/preview/image_raw", 1);
     detSub.subscribe(pNH, "/nn/detections", 1);
-    depthSub.subscribe(pNH, "/depthImage", 1);
-    droneSub = pNH.subscribe("/odom", 1, &Person2DOverlay::odomCB); // subscribe to odom topic - LB
+    droneSub = pNH.subscribe("/odom", 1, &Person2DOverlay3d::odomCB, this); // subscribe to odom topic - LB
+    
     pNH.getParam("odom_frame", odom_frame); // make sure to add odom frame to the launch file - LB
 
     sync = std::make_unique<message_filters::Synchronizer<syncPolicy>>(syncPolicy(10), previewSub, detSub);
     pNH.getParam("label_map", labelMap);
-    sync->registerCallback(std::bind(&Person2DOverlay::overlayCB, this, std::placeholders::_1, std::placeholders::_2));
+    sync->registerCallback(std::bind(&Person2DOverlay3d::overlayCB3d, this, std::placeholders::_1, std::placeholders::_2));
     overlayPub = pNH.advertise<sensor_msgs::Image>("overlay", 10);
     MarkerPub = pNH.advertise<visualization_msgs::MarkerArray>("markers", 10);
+    float old_drone_x = -1E10;
+    float old_drone_y = -1E10;
+    float old_drone_z = -1E10;
+    int id_counter = 0;
+    // initialize marker array
+    visualization_msgs::MarkerArray markerArray;
 }
 // callback function for odom topic - LB
-void Person2DOverlay::odomCB(const nav_msgs::Odometry::ConstPtr& msg){
+void Person2DOverlay3d::odomCB(const nav_msgs::Odometry::ConstPtr& msg){
     dronePose = msg;
 }
 
-void Person2DOverlay::overlayCB(const sensor_msgs::ImageConstPtr& preview, const vision_msgs::Detection2DArrayConstPtr& detections) {
+void Person2DOverlay3d::overlayCB3d(const sensor_msgs::ImageConstPtr& preview, const vision_msgs::Detection2DArrayConstPtr& detections) {
     cv::Mat previewMat = utils::msgToMat(preview, sensor_msgs::image_encodings::BGR8);
     auto white = cv::Scalar(255, 255, 255);
     auto black = cv::Scalar(0, 0, 0);
@@ -78,7 +84,7 @@ void Person2DOverlay::overlayCB(const sensor_msgs::ImageConstPtr& preview, const
             old_drone_x = drone_x;
             old_drone_y = drone_y;
             old_drone_z = drone_z;
-            continue
+            continue;
         }
         visualization_msgs::Marker marker;
         marker.header.frame_id = odom_frame;
@@ -122,4 +128,4 @@ void Person2DOverlay::overlayCB(const sensor_msgs::ImageConstPtr& preview, const
 #include <pluginlib/class_list_macros.h>
 
 // watch the capitalization carefully
-PLUGINLIB_EXPORT_CLASS(depthai_filters::Person2DOverlay, nodelet::Nodelet)
+PLUGINLIB_EXPORT_CLASS(depthai_filters::Person2DOverlay3d, nodelet::Nodelet)

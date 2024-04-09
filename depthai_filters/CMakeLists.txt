@@ -60,6 +60,7 @@ add_library(${PROJECT_NAME} SHARED
     src/feature_tracker_overlay.cpp
     src/features_3d.cpp
     src/utils.cpp
+    src/person2d_overlay_w3dMarker.cpp
 )
 
 ## Add cmake target dependencies of the library
