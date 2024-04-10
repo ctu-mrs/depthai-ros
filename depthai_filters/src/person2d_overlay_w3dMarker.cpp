@@ -24,7 +24,7 @@ void Person2DOverlay3d::onInit() {
   pNH.getParam("label_map", labelMap);
   sync->registerCallback(std::bind(&Person2DOverlay3d::overlayCB3d, this, std::placeholders::_1, std::placeholders::_2));
   overlayPub = pNH.advertise<sensor_msgs::Image>("overlay", 10);
-  MarkerPub = pNH.advertise<visualization_msgs::MarkerArray>("markers", 10);
+  MarkerPub = pNH.advertise<visualization_msgs::MarkerArray>("markers", 1000, true);
   old_drone_x = -1E10;
   old_drone_y = -1E10;
   old_drone_z = -1E10;
@@ -113,6 +113,7 @@ if (!initialized)
           continue;
       }
         ROS_WARN("NEW human fella was detected");
+        visualization_msgs::MarkerArray markerArray;
         visualization_msgs::Marker marker;
         marker.header.frame_id = odom_frame;
         marker.header.stamp = ros::Time::now();
@@ -142,13 +143,13 @@ if (!initialized)
         old_drone_x = drone_x;
         old_drone_y = drone_y;
         old_drone_z = drone_z;
+        MarkerPub.publish(markerArray);
     }
  
     if(person_detected){
       sensor_msgs::Image outMsg;
       cv_bridge::CvImage(preview->header, sensor_msgs::image_encodings::BGR8, previewMat).toImageMsg(outMsg);
       overlayPub.publish(outMsg);
-      MarkerPub.publish(markerArray);
     }
 }
 }  // namespace depthai_filters
