@@ -13,11 +13,9 @@
 
 namespace depthai_filters {
 void Person2DOverlay3d::onInit() {
-  ROS_WARN("fuck");
   auto pNH = getPrivateNodeHandle();
   previewSub.subscribe(pNH, "/rgb/preview/image_raw", 1);
   detSub.subscribe(pNH, "/nn/detections", 1);
-  ROS_WARN("im confused");
   droneSub = pNH.subscribe("/odom_in", 1, &Person2DOverlay3d::odomCB, this); // subscribe to odom topic - LB
   
   pNH.getParam("odom_frame", odom_frame); // make sure to add odom frame to the launch file - LB
@@ -63,7 +61,7 @@ if (!initialized)
       if (labelStr != "person"){
         continue;
       }
-      ROS_WARN("human fellas was detected");
+  
       person_detected = true;
       auto confidence = detection.results[0].score;
 
@@ -114,7 +112,7 @@ if (!initialized)
           old_drone_z = drone_z;
           continue;
       }
-      ROS_WARN("odom_frame is ", odom_frame.c_str());
+        ROS_WARN("NEW human fella was detected");
         visualization_msgs::Marker marker;
         marker.header.frame_id = odom_frame;
         marker.header.stamp = ros::Time::now();
@@ -129,14 +127,15 @@ if (!initialized)
         marker.pose.orientation.y = q_detection.y();
         marker.pose.orientation.z = q_detection.z();
         marker.pose.orientation.w = q_detection.w();
-        marker.scale.x = 0.1;
-        marker.scale.y = 0.1;
-        marker.scale.z = 0.1;
-        marker.color.a = 1.0;  
+        marker.scale.x = 0.2;
+        marker.scale.y = 0.05;
+        marker.scale.z = 0.0;
+        marker.color.a = 0.5;  
         marker.color.r = 0.0;
         marker.color.g = 1.0;
         marker.color.b = 0.0;
         markerArray.markers.push_back(marker);
+        ROS_WARN("Marker added. Its ID is %d", id_counter);
         id_counter++;
 
         // Update old drone position - LB
