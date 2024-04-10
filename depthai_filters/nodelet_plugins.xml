@@ -9,6 +9,11 @@
   Detection 2D Overlay.
     </description>
   </class>
+  <class name="depthai_filters/Person2DOverlay3d" type="depthai_filters::Person2DOverlay3d" base_class_type="nodelet::Nodelet">
+    <description>
+  Detection 2D Overlay.
+    </description>
+  </class>
   <class name="depthai_filters/SegmentationOverlay" type="depthai_filters::SegmentationOverlay" base_class_type="nodelet::Nodelet">
     <description>
   Segmentation Overlay.

@@ -31,26 +31,30 @@ class ObjectPublisher():
 
     def __init__(self):
         rospy.init_node('object_publisher')
-        self._sub_ = rospy.Subscriber(
-            '/oak/nn/detections', Detection3DArray, self.publish_data, queue_size=1)
-        self._det_pub = rospy.Publisher(
-            '/oak/nn/detection_markers', ImageMarkerArray, queue_size=1)
-        self._text_pub = rospy.Publisher(
-            '/oak/nn/text_markers', MarkerArray, queue_size=1)
+        self._sub_ = rospy.Subscriber('/uav46/oak/nn/spatial_detections', Detection3DArray, self.publish_data, queue_size=1)
+        self._det_pub = rospy.Publisher('/uav46/oak/nn/detection_markers', MarkerArray, queue_size=1)
+        self._text_pub = rospy.Publisher('/uav46/oak/nn/text_markers', MarkerArray, queue_size=1)
         self._unique_id = 0
 
         rospy.loginfo('ObjectPublisher node Up!')
 
     def publish_data(self, msg: Detection3DArray):
-        markerArray = ImageMarkerArray()
+        markerArray = MarkerArray()
         textMarker = MarkerArray()
         i = 0
         if self._unique_id > 50:
             self._unique_id = 0
+
         for det in msg.detections:
+            # if det.results[0].id != 'person':
+            #     continue
+
+
             bbox = det.bbox
             det.results[0]
             label = f'{det.results[0].id}_{i + self._unique_id}'
+            rospy.logwarn(label)
+
             det_pose = det.results[0].pose.pose
             textMarker.markers.append(Marker(
                     header=msg.header,

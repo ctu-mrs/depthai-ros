@@ -34,6 +34,7 @@ class Person2DOverlay3d : public nodelet::Nodelet {
     float old_drone_y;
     float old_drone_z;
     int id_counter;
+    bool initialized;
 
     typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, vision_msgs::Detection2DArray> syncPolicy;
     std::unique_ptr<message_filters::Synchronizer<syncPolicy>> sync;

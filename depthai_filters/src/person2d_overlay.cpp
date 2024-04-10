@@ -9,6 +9,7 @@
 #include "pluginlib/class_list_macros.h"
 
 namespace depthai_filters {
+
 void Person2DOverlay::onInit() {
     auto pNH = getPrivateNodeHandle();
     previewSub.subscribe(pNH, "/rgb/preview/image_raw", 1);
