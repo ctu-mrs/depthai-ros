@@ -25,10 +25,10 @@ void Person2DOverlay3d::onInit() {
   sync->registerCallback(std::bind(&Person2DOverlay3d::overlayCB3d, this, std::placeholders::_1, std::placeholders::_2));
   overlayPub = pNH.advertise<sensor_msgs::Image>("overlay", 10);
   MarkerPub = pNH.advertise<visualization_msgs::MarkerArray>("markers", 10);
-  float old_drone_x = -1E10;
-  float old_drone_y = -1E10;
-  float old_drone_z = -1E10;
-  int id_counter = 0;
+  old_drone_x = -1E10;
+  old_drone_y = -1E10;
+  old_drone_z = -1E10;
+  id_counter = 0;
   // initialize marker array
   visualization_msgs::MarkerArray markerArray;
 
